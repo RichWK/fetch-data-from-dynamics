@@ -7,7 +7,9 @@ namespace MSAL
 {
     public class Logging
     {
-        private static string _path { get; } = Directory.GetCurrentDirectory() + DateTime.Now.ToString("yyyy-MM-dd HHmmss fff");
+        private static string _path { get; } =  Directory.GetCurrentDirectory()
+                                                + "\\logging\\"
+                                                + DateTime.Now.ToString("yyyy-MM-dd HHmmss fff");
 
         public static void HandleException(Exception ex)
         {
@@ -30,11 +32,11 @@ namespace MSAL
 
         public static void WriteLogFile(Exception ex)
         {
-            string data =   "Error message received was:\n\n\"" +
-                            ex.Message +
-                            "\"\n\nAnd here's the stack trace:\n\n\"" +
-                            ex.StackTrace +
-                            "\"";
+            string data =   "Error message received was:\n\n\""
+                            + ex.Message
+                            + "\"\n\nAnd here's the stack trace:\n\n\""
+                            + ex.StackTrace
+                            + "\"";
             
             UseStreamWriterAsync(_path + " (EXCEPTION OCCURRED).txt",data).Wait();
         }

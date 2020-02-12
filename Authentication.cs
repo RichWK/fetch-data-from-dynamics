@@ -17,6 +17,8 @@ namespace MSAL
         
         public async static Task<AuthenticationResult> RequestTokenAsync()
         {
+            Console.WriteLine("Contacting the Dynamics Web API @ " + _connection["Scope"].Replace(".default",""));
+
             _app = ConfidentialClientApplicationBuilder.Create(_connection["ClientId"])
                 .WithClientSecret(_connection["ClientSecret"])
                 .WithAuthority(String.Format(_connection["Instance"], _connection["Tenant"]))

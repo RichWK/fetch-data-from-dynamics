@@ -3,18 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
 
 namespace MSAL
 {
     class Program
     {        
-        private static IConfidentialClientApplication _app;
-        private static AuthenticationResult _authResult = null;
-        private static Dictionary<string, string> _connection { get; } = Config.GetConnectionValues();
-        private static Dictionary<string, string> _query { get; } = Config.GetParameters();
-        private static string[] _scopes { get; } = new string[] { _connection["Scope"] };
-
         static void Main()
         {
             try
@@ -31,13 +24,17 @@ namespace MSAL
 
         private static void FetchData()
         {
-            if (AuthenticateAsync().Result)
+            AuthenticationResult _authResult = Authentication.RequestTokenAsync().Result;
+            Dictionary<string, string> _query = Config.GetQueryParameters();
+
+            if (_authResult != null)
             {
                 HttpClient client = new HttpClient();
+                string response;
 
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _authResult.AccessToken);
 
-                string response = client.GetAsync(_query["Uri"])
+                response = client.GetAsync(String.Format(_query["Uri"], _query["Date"]))
                     .Result
                     .Content
                     .ReadAsStringAsync()
@@ -45,18 +42,6 @@ namespace MSAL
 
                 Console.WriteLine(response);
             }
-        }
-
-        private async static Task<bool> AuthenticateAsync()
-        {
-            _app = ConfidentialClientApplicationBuilder.Create(_connection["ClientId"])
-                .WithClientSecret(_connection["ClientSecret"])
-                .WithAuthority(String.Format(_connection["Instance"], _connection["Tenant"]))
-                .Build();
-
-            _authResult = await _app.AcquireTokenForClient(_scopes).ExecuteAsync();
-
-            return true;
         }
     }
 }

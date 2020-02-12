@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -36,7 +37,6 @@ namespace MSAL
             Console.Read();
         }
 
-
         private static void FetchData()
         {
             AuthenticationResult _authResult = Authentication.RequestTokenAsync().Result;
@@ -55,7 +55,6 @@ namespace MSAL
 
             TransformData(response);
         }
-
 
         private static void TransformData(string json)
         {
@@ -78,10 +77,15 @@ namespace MSAL
             Json = jsonOutput;
         }
 
-
         private static string SanitizeInput(string json)
         {
             return json.Replace(";", "").Replace("--", "").Replace("/*", "").Replace("*/", "").Replace("xp_", "");
+        }
+
+        private static void CopyDataToSQLServer()
+        {
+            DataTable table = new ContactTable();
+            DataRow row;
         }
     }
 }

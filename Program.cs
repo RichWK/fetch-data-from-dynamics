@@ -1,4 +1,5 @@
 ﻿using Microsoft.Identity.Client;
+using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -98,10 +99,34 @@ namespace MSAL
                 BulkCopyAsync(table).Wait();
             }
         }
-
+        
         private async static Task BulkCopyAsync(DataTable table)
         {
+            int startingRows;
+            int endingRows;
 
+            Console.WriteLine("Attempting to copy data into 'ID Works' table...");
+
+            using SqlConnection conn = new SqlConnection(Config.SQLServer["ConnectionString"]);
+
+            SqlCommand count = new SqlCommand("select count(*) from dbo.Contacts", conn);
+
+            await conn.OpenAsync();
+
+            startingRows = System.Convert.ToInt32(count.ExecuteScalar());
+            Console.WriteLine("The table currently holds {0} rows.",startingRows);
+
+            using SqlBulkCopy bulkCopy = new SqlBulkCopy(conn)
+            {
+                DestinationTableName = "dbo.Contacts"
+            };
+
+            await bulkCopy.WriteToServerAsync(table);
+
+            endingRows = System.Convert.ToInt32(count.ExecuteScalar());
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("Successfully added {0} rows. (The rest of the contacts already exist.)", endingRows - startingRows);
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
     }
 }

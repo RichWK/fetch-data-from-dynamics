@@ -6,13 +6,16 @@ namespace MSAL
 {
     public class Config
     {
-        public static Dictionary<string, string> GetValues()
+        public static Dictionary<string, string> GetConnectionValues() => GetValues("Connection");
+        public static Dictionary<string, string> GetParameters() => GetValues("Query");
+        
+        private static Dictionary<string, string> GetValues(string category)
         {
             IEnumerable<IConfigurationSection> config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .Build()
-                .GetSection("Connection")
+                .GetSection(category)
                 .GetChildren();
 
             var values = new Dictionary<string, string>();

@@ -11,16 +11,22 @@ namespace MSAL
 {
     class Program
     {        
-        private static List<Contact> _contacts;
-        private static string _json;
+        public static List<Contact> Contacts { get; private set; }
+        public static string Json { get; private set; }
 
         static void Main()
         {
             try
             {
-                (_contacts, _json) = FetchData();
+                FetchData();
 
-                Console.WriteLine(_json);
+                if(Contacts.Count > 0 && Json != null)
+                {
+                    CopyDataToSQLServer();
+                    Logging.WriteLogFile();
+                }
+
+                Console.WriteLine(Json);
             }
             catch(Exception ex)
             {
@@ -31,7 +37,7 @@ namespace MSAL
         }
 
 
-        private static (List<Contact>,string) FetchData()
+        private static void FetchData()
         {
             AuthenticationResult _authResult = Authentication.RequestTokenAsync().Result;
             Dictionary<string, string> _query = Config.GetQueryParameters();
@@ -47,11 +53,11 @@ namespace MSAL
                 .ReadAsStringAsync()
                 .Result;
 
-            return MassageData(response);
+            TransformData(response);
         }
 
 
-        private static (List<Contact>,string) MassageData(string json)
+        private static void TransformData(string json)
         {
             List<Contact> contacts = new List<Contact>();
             JObject jsonObject = JObject.Parse(SanitizeInput(json));
@@ -65,8 +71,11 @@ namespace MSAL
             }
 
             jsonOutput = JsonConvert.SerializeObject(contacts,Formatting.Indented);
+
+            Console.WriteLine("Fetched {0} contacts.", contacts.Count);
             
-            return (contacts,jsonOutput);
+            Contacts = contacts;
+            Json = jsonOutput;
         }
 
 

@@ -7,24 +7,25 @@ namespace MSAL
 {
     public class Authentication
     {
+        private static Dictionary<string, string> _conn { get; } = Program.Config.Microsoft;
         private static IConfidentialClientApplication _app;
         private static AuthenticationResult _authResult;
-        private static Dictionary<string, string> _connection { get; } = Config.GetConnectionValues();
-        private static string[] _scopes { get; } = new string[] { _connection["Scope"] };
 
-        // This method makes use of Microsoft's Authentication Library (MSAL).
-        // It uses the values in appsettings.json to prove this app's identity.
+        // This method uses Microsoft's Authentication Library (MSAL).
+        // It uses the values specified in appsettings.json to prove this app's identity.
         
         public async static Task<AuthenticationResult> RequestTokenAsync()
         {
-            Console.WriteLine("Contacting the Dynamics Web API @ " + _connection["Scope"].Replace(".default",""));
+            string[] scopes = new string[] { _conn["Scope"] };
+            
+            Console.WriteLine("Contacting the Dynamics Web API @ " + _conn["Scope"].Replace(".default",""));
 
-            _app = ConfidentialClientApplicationBuilder.Create(_connection["ClientId"])
-                .WithClientSecret(_connection["ClientSecret"])
-                .WithAuthority(String.Format(_connection["Instance"], _connection["Tenant"]))
+            _app = ConfidentialClientApplicationBuilder.Create(_conn["ClientId"])
+                .WithClientSecret(_conn["ClientSecret"])
+                .WithAuthority(String.Format(_conn["Instance"], _conn["Tenant"]))
                 .Build();
 
-            _authResult = await _app.AcquireTokenForClient(_scopes).ExecuteAsync();
+            _authResult = await _app.AcquireTokenForClient(scopes).ExecuteAsync();
 
             return _authResult;
         }

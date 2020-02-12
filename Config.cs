@@ -7,19 +7,20 @@ namespace MSAL
 {
     // This class fetches the configuration values from appsettings.json.
 
-    public class Config
+    public class Configuration
     {
-        public static Dictionary<string, string> GetConnectionValues() => GetValues("Connection");
-        public static Dictionary<string, string> GetQueryParameters()
+        public Dictionary<string, string> Microsoft { get; } = GetValues("Microsoft");
+        public Dictionary<string, string> Query { get; } = GetValues("Query");
+        public Dictionary<string, string> SQLServer { get; } = GetValues("SQLServer");
+        
+        public Configuration()
         {
-            Dictionary<string, string> queryParameters = GetValues("Query");
-            string date = DateTime.Now
-                            .AddDays(-Int32.Parse(queryParameters["DaysBack"]))
-                            .ToString("yyyy-MM-dd");
+            string date = DateTime
+                .Now
+                .AddDays(-Int32.Parse(Query["DaysBack"]))
+                .ToString("yyyy-MM-dd");
 
-            queryParameters.Add("Date", date);
-
-            return queryParameters;
+            Query.Add("Date", date);
         }
         
         private static Dictionary<string, string> GetValues(string category)

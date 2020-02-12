@@ -7,11 +7,13 @@ using System.Data;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace MSAL
 {
     class Program
     {        
+        public static Configuration Config { get; } = new Configuration();
         public static List<Contact> Contacts { get; private set; }
         public static string Json { get; private set; }
 
@@ -20,14 +22,8 @@ namespace MSAL
             try
             {
                 FetchData();
-
-                if(Contacts.Count > 0)
-                {
-                    // CopyDataToSQLServer();
-                }
-
+                CopyDataToSQLServer();
                 Logging.WriteLogFile();
-                Console.WriteLine(Json);
             }
             catch(Exception ex)
             {
@@ -40,14 +36,14 @@ namespace MSAL
         private static void FetchData()
         {
             AuthenticationResult _authResult = Authentication.RequestTokenAsync().Result;
-            Dictionary<string, string> _query = Config.GetQueryParameters();
 
             HttpClient client = new HttpClient();
             string response;
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _authResult.AccessToken);
 
-            response = client.GetAsync(String.Format(_query["Uri"], _query["Date"]))
+            response = client
+                .GetAsync(String.Format(Config.Query["Uri"], Config.Query["Date"]))
                 .Result
                 .Content
                 .ReadAsStringAsync()
@@ -84,8 +80,28 @@ namespace MSAL
 
         private static void CopyDataToSQLServer()
         {
-            DataTable table = new ContactTable();
-            DataRow row;
+            if(Contacts.Count() > 0)
+            {
+                DataTable table = new ContactTable();
+                DataRow row;
+
+                foreach(Contact contact in Contacts)
+                {
+                    row = table.NewRow();
+                    row["ContactId"] = contact.Spark_ContactNumber;
+                    row["FirstName"] = contact.FirstName;
+                    row["LastName"] = contact.LastName;
+                    row["CreatedInDynamicsOn"] = contact.CreatedOn;
+                    table.Rows.Add(row);
+                }
+
+                BulkCopyAsync(table).Wait();
+            }
+        }
+
+        private async static Task BulkCopyAsync(DataTable table)
+        {
+
         }
     }
 }

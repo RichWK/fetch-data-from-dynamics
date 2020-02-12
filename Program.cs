@@ -20,17 +20,17 @@ namespace MSAL
             {
                 FetchData();
 
-                if(Contacts.Count > 0 && Json != null)
+                if(Contacts.Count > 0)
                 {
-                    CopyDataToSQLServer();
-                    Logging.WriteLogFile();
+                    // CopyDataToSQLServer();
                 }
 
+                Logging.WriteLogFile();
                 Console.WriteLine(Json);
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logging.HandleException(ex);
             }
             
             Console.Read();

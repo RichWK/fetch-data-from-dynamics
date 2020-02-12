@@ -17,6 +17,7 @@ namespace MSAL
         public static Configuration Config { get; } = new Configuration();
         public static List<Contact> Contacts { get; private set; }
         public static string Json { get; private set; }
+        private static int _wait { get; } = 20;
 
         static void Main()
         {
@@ -31,7 +32,8 @@ namespace MSAL
                 Logging.HandleException(ex);
             }
             
-            Console.Read();
+            Console.WriteLine("Exiting in {0} seconds...", _wait);
+            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(_wait));
         }
 
         private static void FetchData()

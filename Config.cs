@@ -5,8 +5,6 @@ using System.Collections.Generic;
 
 namespace MSAL
 {
-    // This class fetches the configuration values from appsettings.json.
-
     public class Configuration
     {
         public Dictionary<string, string> Microsoft { get; } = GetValues("Microsoft");

@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 
-namespace MSAL
+namespace FetchDataFromDynamics
 {
     public class Configuration
     {

@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace MSAL
+namespace FetchDataFromDynamics
 {
     public class ContactTable : DataTable
     {

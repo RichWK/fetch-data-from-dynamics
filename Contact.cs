@@ -1,6 +1,6 @@
 using System;
 
-namespace MSAL
+namespace FetchDataFromDynamics
 {
     public class Contact
     {

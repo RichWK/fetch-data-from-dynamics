@@ -7,9 +7,8 @@ namespace MSAL
 {
     public class Logging
     {
-        private static string _path { get; } =  Directory.GetCurrentDirectory()
-                                                + "\\logging\\"
-                                                + DateTime.Now.ToString("yyyy-MM-dd HHmmss fff");
+        private static string _path { get; } =  Directory.GetCurrentDirectory() + "\\logging\\";
+        private static string _fileName { get; } = DateTime.Now.ToString("yyyy-MM-dd HHmmss fff");
 
         public static void HandleException(Exception ex)
         {
@@ -26,7 +25,7 @@ namespace MSAL
         {
             if(Program.Json != null)
             {
-                UseStreamWriterAsync(_path + ".json", Program.Json).Wait();
+                UseStreamWriterAsync(".json", Program.Json).Wait();
             }
         }
 
@@ -38,12 +37,16 @@ namespace MSAL
                             + ex.StackTrace
                             + "\"";
             
-            UseStreamWriterAsync(_path + " (EXCEPTION OCCURRED).txt",data).Wait();
+            UseStreamWriterAsync(" (EXCEPTION OCCURRED).txt", data).Wait();
         }
 
-        private async static Task UseStreamWriterAsync(string path, string data)
+        private async static Task UseStreamWriterAsync(string pathSuffix, string data)
         {
-            using StreamWriter writer = new StreamWriter(path, false, Encoding.UTF8);
+            Directory.CreateDirectory(_path);
+            
+            string fullPath = String.Concat(_path,_fileName,pathSuffix);
+
+            using StreamWriter writer = new StreamWriter(fullPath, false, Encoding.UTF8);
             await writer.WriteAsync(data);
         }
     }

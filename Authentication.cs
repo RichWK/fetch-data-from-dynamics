@@ -11,8 +11,9 @@ namespace FetchDataFromDynamics
         private static IConfidentialClientApplication _app;
         private static AuthenticationResult _authResult;
 
-        // This method uses Microsoft's Authentication Library (MSAL).
+        // This method makes use of Microsoft's Authentication Library (MSAL).
         // It uses the values specified in appsettings.json to prove this app's identity.
+        // (The app is registered in Azure Active Directory.)
         
         public async static Task<AuthenticationResult> RequestTokenAsync()
         {

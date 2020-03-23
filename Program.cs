@@ -111,7 +111,7 @@ namespace FetchDataFromDynamics
 
             using SqlConnection conn = new SqlConnection(Config.SQLServer["ConnectionString"]);
 
-            SqlCommand count = new SqlCommand("select count(*) from dbo.Contacts", conn);
+            SqlCommand count = new SqlCommand("select count(ContactID) from dbo.Contacts", conn);
 
             await conn.OpenAsync();
 

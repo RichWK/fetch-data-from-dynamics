@@ -12,6 +12,6 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="1.1.0"/>
   </ItemGroup>
   <ItemGroup>
-    <None Include="appsettings.json" CopyToPublishDirectory="Always" />
+    <Content Include="appsettings*json" CopyToPublishDirectory="Always" />
   </ItemGroup>
 </Project>

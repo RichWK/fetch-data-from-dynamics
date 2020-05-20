@@ -25,7 +25,7 @@ namespace FetchDataFromDynamics
         {
             IEnumerable<IConfigurationSection> config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build()
                 .GetSection(category)
                 .GetChildren();

@@ -13,5 +13,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="appsettings*json" CopyToPublishDirectory="Always" />
+    <Content Include="secrets*json" CopyToPublishDirectory="Always" />
   </ItemGroup>
 </Project>

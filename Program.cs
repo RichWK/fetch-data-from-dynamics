@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace FetchDataFromDynamics
 {
     class Program
-    {        
+    {
         public static Configuration Config { get; } = new Configuration();
         public static List<Contact> Contacts { get; private set; }
         public static string Json { get; private set; }
@@ -27,11 +27,11 @@ namespace FetchDataFromDynamics
                 CopyDataToSQLServer();
                 Logging.WriteLogFile();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logging.HandleException(ex);
             }
-            
+
             Console.WriteLine("Exiting in {0} seconds...", _wait);
             System.Threading.Thread.Sleep(TimeSpan.FromSeconds(_wait));
         }
@@ -62,16 +62,16 @@ namespace FetchDataFromDynamics
             List<JToken> jsonSubset = jsonObject["value"].Children().ToList();
             string jsonOutput;
 
-            foreach(JToken item in jsonSubset)
+            foreach (JToken item in jsonSubset)
             {
                 Contact contact = item.ToObject<Contact>();
                 contacts.Add(contact);
             }
 
-            jsonOutput = JsonConvert.SerializeObject(contacts,Formatting.Indented);
+            jsonOutput = JsonConvert.SerializeObject(contacts, Formatting.Indented);
 
             Console.WriteLine("Fetched {0} contacts.", contacts.Count);
-            
+
             Contacts = contacts;
             Json = jsonOutput;
         }
@@ -83,12 +83,12 @@ namespace FetchDataFromDynamics
 
         private static void CopyDataToSQLServer()
         {
-            if(Contacts.Count() > 0)
+            if (Contacts.Count() > 0)
             {
                 DataTable table = new ContactTable();
                 DataRow row;
 
-                foreach(Contact contact in Contacts)
+                foreach (Contact contact in Contacts)
                 {
                     row = table.NewRow();
                     row["ContactId"] = contact.Spark_ContactNumber;
@@ -101,7 +101,7 @@ namespace FetchDataFromDynamics
                 BulkCopyAsync(table).Wait();
             }
         }
-        
+
         private async static Task BulkCopyAsync(DataTable table)
         {
             int startingRows;
@@ -116,7 +116,7 @@ namespace FetchDataFromDynamics
             await conn.OpenAsync();
 
             startingRows = System.Convert.ToInt32(count.ExecuteScalar());
-            Console.WriteLine("The table currently holds {0} rows.",startingRows);
+            Console.WriteLine("The table currently holds {0} rows.", startingRows);
 
             using SqlBulkCopy bulkCopy = new SqlBulkCopy(conn)
             {

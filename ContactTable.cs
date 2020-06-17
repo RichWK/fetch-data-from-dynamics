@@ -10,7 +10,7 @@ namespace FetchDataFromDynamics
         {
             _column = new DataColumn
             {
-                ColumnName = "ContactId",
+                ColumnName = "CUST_NO",
                 DataType = System.Type.GetType("System.String")
             };
 
@@ -18,24 +18,24 @@ namespace FetchDataFromDynamics
 
             _column = new DataColumn
             {
-                ColumnName = "FirstName",
-                DataType = System.Type.GetType("System.String")
+                ColumnName = "CARDYN",
+                DataType = System.Type.GetType("System.Char")
             };
 
             Columns.Add(_column);
 
             _column = new DataColumn
             {
-                ColumnName = "LastName",
-                DataType = System.Type.GetType("System.String")
+                ColumnName = "NUM_CARDS",
+                DataType = System.Type.GetType("System.Int32")
             };
 
             Columns.Add(_column);
 
             _column = new DataColumn
             {
-                ColumnName = "CreatedInDynamicsOn",
-                DataType = System.Type.GetType("System.DateTime")
+                ColumnName = "IMAGE_PATH",
+                DataType = System.Type.GetType("System.String")
             };
 
             Columns.Add(_column);

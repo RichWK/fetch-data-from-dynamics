@@ -117,7 +117,7 @@ namespace FetchDataFromDynamics
 
             Console.WriteLine("Attempting to copy data into 'ID Works' table...");
 
-            using SqlConnection conn = new SqlConnection(Config.SQLServer["ConnectionString"]);
+            using SqlConnection conn = new SqlConnection(Config.SQLServer["DevConnectionString"]);
             SqlCommand count = new SqlCommand(
                 "select count(ContactID) from dbo.MR_MEMBERCARD_1"
                 ,conn

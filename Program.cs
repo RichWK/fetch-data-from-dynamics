@@ -43,7 +43,10 @@ namespace FetchDataFromDynamics
             HttpClient client = new HttpClient();
             string response;
 
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _authResult.AccessToken);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                "Bearer"
+                ,_authResult.AccessToken
+            );
 
             response = client
                 .GetAsync(String.Format(Config.Query["Uri"], Config.Query["Date"]))
@@ -78,7 +81,12 @@ namespace FetchDataFromDynamics
 
         private static string SanitizeInput(string json)
         {
-            return json.Replace(";", "").Replace("--", "").Replace("/*", "").Replace("*/", "").Replace("xp_", "");
+            return json
+                .Replace(";", "")
+                .Replace("--", "")
+                .Replace("/*", "")
+                .Replace("*/", "")
+                .Replace("xp_", "");
         }
 
         private static void CopyDataToSQLServer()
@@ -91,10 +99,10 @@ namespace FetchDataFromDynamics
                 foreach (Contact contact in Contacts)
                 {
                     row = table.NewRow();
-                    row["ContactId"] = contact.Spark_ContactNumber;
-                    row["FirstName"] = contact.FirstName;
-                    row["LastName"] = contact.LastName;
-                    row["CreatedInDynamicsOn"] = contact.CreatedOn;
+                    row["CUST_NO"] = contact.Spark_ContactNumber;
+                    row["CARDYN"] = contact.CardCreated;
+                    row["NUM_CARDS"] = contact.NumberOfCards;
+                    row["IMAGE_PATH"] = contact.ImagePath;
                     table.Rows.Add(row);
                 }
 
@@ -104,30 +112,35 @@ namespace FetchDataFromDynamics
 
         private async static Task BulkCopyAsync(DataTable table)
         {
-            int startingRows;
-            int endingRows;
+            int startingRowCount;
+            int endingRowCount;
 
             Console.WriteLine("Attempting to copy data into 'ID Works' table...");
 
             using SqlConnection conn = new SqlConnection(Config.SQLServer["ConnectionString"]);
-
-            SqlCommand count = new SqlCommand("select count(ContactID) from dbo.Contacts", conn);
-
+            SqlCommand count = new SqlCommand(
+                "select count(ContactID) from dbo.MR_MEMBERCARD_1"
+                ,conn
+            );
+            
             await conn.OpenAsync();
+            startingRowCount = System.Convert.ToInt32(count.ExecuteScalar());
 
-            startingRows = System.Convert.ToInt32(count.ExecuteScalar());
-            Console.WriteLine("The table currently holds {0} rows.", startingRows);
+            Console.WriteLine("The table currently holds {0} rows.", startingRowCount);
 
             using SqlBulkCopy bulkCopy = new SqlBulkCopy(conn)
             {
-                DestinationTableName = "dbo.Contacts"
+                DestinationTableName = "dbo.MR_MEMBERCARD_1"
             };
 
             await bulkCopy.WriteToServerAsync(table);
 
-            endingRows = System.Convert.ToInt32(count.ExecuteScalar());
+            endingRowCount = System.Convert.ToInt32(count.ExecuteScalar());
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("Successfully added {0} rows. (The rest of the contacts already exist.)", endingRows - startingRows);
+            Console.WriteLine(
+                "Successfully added {0} rows. (The rest of the contacts already exist.)"
+                ,endingRowCount - startingRowCount
+            );
             Console.ForegroundColor = ConsoleColor.Gray;
         }
     }

@@ -10,7 +10,7 @@ namespace FetchDataFromDynamics
         public DateTime CreatedOn { get; }
         public char CardCreated { get; } = 'N';
         public int NumberOfCards { get; } = 0;
-        public string ImagePath { get; } = "\\\\mls_storage\\member_photos\\{{}}.jpg";
+        public string ImagePath { get; }
        
         public Contact(string firstName, string lastName, string spark_ContactNumber, DateTime createdOn)
         {
@@ -18,7 +18,11 @@ namespace FetchDataFromDynamics
             LastName = lastName;
             Spark_ContactNumber = spark_ContactNumber;
             CreatedOn = createdOn;
-            ImagePath = String.Format(ImagePath, Spark_ContactNumber);
+            ImagePath = String.Format(
+                "\\\\mls_storage\\member_photos\\{{}}.jpg"
+                ,Spark_ContactNumber
+            );
         }
     }
 }
+

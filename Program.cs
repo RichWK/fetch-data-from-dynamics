@@ -121,9 +121,14 @@ namespace FetchDataFromDynamics
             int initialRowCount;
             int finalRowCount;
 
-            Console.WriteLine("Attempting to copy data into the '{0}' table...", _targetTable);
+            Console.WriteLine(
+                "Attempting to copy data into the '{0}' table..."
+                , _targetTable
+            );
 
-            using SqlConnection conn = new SqlConnection(Config.SQLServer["DevConnectionString"]);
+            using SqlConnection conn = new SqlConnection(
+                Config.SQLServer["DevConnectionString"]
+            );
             
             await conn.OpenAsync();
 

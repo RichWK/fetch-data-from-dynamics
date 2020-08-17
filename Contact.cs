@@ -19,7 +19,7 @@ namespace FetchDataFromDynamics
             Spark_ContactNumber = spark_ContactNumber;
             CreatedOn = createdOn;
             ImagePath = String.Format(
-                "\\\\mls_storage\\member_photos\\{{}}.jpg"
+                "\\\\mls_storage\\member_photos\\{0}.jpg"
                 ,Spark_ContactNumber
             );
         }

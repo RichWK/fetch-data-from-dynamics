@@ -76,7 +76,7 @@ namespace FetchDataFromDynamics
 
             jsonOutput = JsonConvert.SerializeObject(contacts, Formatting.Indented);
 
-            Console.WriteLine("Fetched {0} recently created contacts.", contacts.Count);
+            Console.WriteLine("Fetched {0} recently created members.", contacts.Count);
 
             Contacts = contacts;
             Json = jsonOutput;
@@ -145,7 +145,7 @@ namespace FetchDataFromDynamics
             finalRowCount = CountRows(conn);
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine(
-                "Successfully added {0} rows. (Any ignored contacts already exist.)"
+                "Successfully added {0} rows. (Any ignored members already exist.)"
                 ,finalRowCount - initialRowCount
             );
 

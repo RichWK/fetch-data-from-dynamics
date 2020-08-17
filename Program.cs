@@ -76,7 +76,7 @@ namespace FetchDataFromDynamics
 
             jsonOutput = JsonConvert.SerializeObject(contacts, Formatting.Indented);
 
-            Console.WriteLine("Fetched {0} contacts.", contacts.Count);
+            Console.WriteLine("Fetched {0} recently created contacts.", contacts.Count);
 
             Contacts = contacts;
             Json = jsonOutput;

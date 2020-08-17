@@ -37,6 +37,7 @@ namespace FetchDataFromDynamics
             System.Threading.Thread.Sleep(TimeSpan.FromSeconds(_wait));
         }
 
+
         private static void FetchData()
         {
             AuthenticationResult _authResult = Authentication.RequestTokenAsync().Result;
@@ -59,6 +60,7 @@ namespace FetchDataFromDynamics
             TransformData(response);
         }
 
+
         private static void TransformData(string json)
         {
             List<Contact> contacts = new List<Contact>();
@@ -80,6 +82,7 @@ namespace FetchDataFromDynamics
             Json = jsonOutput;
         }
 
+
         private static string SanitizeInput(string json)
         {
             return json
@@ -89,6 +92,7 @@ namespace FetchDataFromDynamics
                 .Replace("*/", "")
                 .Replace("xp_", "");
         }
+
 
         private static void CopyDataToSQLServer()
         {
@@ -111,23 +115,20 @@ namespace FetchDataFromDynamics
             }
         }
 
+
         private async static Task BulkCopyAsync(DataTable table)
         {
-            int startingRowCount;
-            int endingRowCount;
+            int initialRowCount;
+            int finalRowCount;
 
             Console.WriteLine("Attempting to copy data into '{0}' table...", _targetTable);
 
             using SqlConnection conn = new SqlConnection(Config.SQLServer["DevConnectionString"]);
-            SqlCommand count = new SqlCommand(
-                "select count(CUST_NO) from dbo.MR_MEMBERCARD_1"
-                ,conn
-            );
             
             await conn.OpenAsync();
-            startingRowCount = System.Convert.ToInt32(count.ExecuteScalar());
 
-            Console.WriteLine("The table currently holds {0} rows.", startingRowCount);
+            initialRowCount = CountRows(conn);
+            Console.WriteLine("The table currently holds {0} rows.", initialRowCount);
 
             using SqlBulkCopy bulkCopy = new SqlBulkCopy(conn)
             {
@@ -136,13 +137,27 @@ namespace FetchDataFromDynamics
 
             await bulkCopy.WriteToServerAsync(table);
 
-            endingRowCount = System.Convert.ToInt32(count.ExecuteScalar());
+            finalRowCount = CountRows(conn);
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine(
-                "Successfully added {0} rows. (The rest of the contacts already exist.)"
-                ,endingRowCount - startingRowCount
+                "Successfully added {0} rows. (Any ignored contacts already exist.)"
+                ,finalRowCount - initialRowCount
             );
+
             Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("The table now holds {0} rows.", finalRowCount);
+        }
+
+
+        private static int CountRows(SqlConnection conn)
+        {
+            SqlCommand count = new SqlCommand(
+                String.Format("select count(CUST_NO) from {0}", _targetTable)
+                ,conn
+            );
+
+            return System.Convert.ToInt32(count.ExecuteScalar());
         }
     }
 }
+

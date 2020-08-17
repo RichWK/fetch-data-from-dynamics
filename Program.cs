@@ -18,6 +18,7 @@ namespace FetchDataFromDynamics
         public static List<Contact> Contacts { get; private set; }
         public static string Json { get; private set; }
         private static int _wait { get; } = 20;
+        private static string _targetTable { get; } = "dbo.MR_MEMBERCARD_1";
 
         static void Main()
         {
@@ -115,11 +116,11 @@ namespace FetchDataFromDynamics
             int startingRowCount;
             int endingRowCount;
 
-            Console.WriteLine("Attempting to copy data into 'ID Works' table...");
+            Console.WriteLine("Attempting to copy data into '{0}' table...", _targetTable);
 
             using SqlConnection conn = new SqlConnection(Config.SQLServer["DevConnectionString"]);
             SqlCommand count = new SqlCommand(
-                "select count(ContactID) from dbo.MR_MEMBERCARD_1"
+                "select count(CUST_NO) from dbo.MR_MEMBERCARD_1"
                 ,conn
             );
             
@@ -130,7 +131,7 @@ namespace FetchDataFromDynamics
 
             using SqlBulkCopy bulkCopy = new SqlBulkCopy(conn)
             {
-                DestinationTableName = "dbo.MR_MEMBERCARD_1"
+                DestinationTableName = _targetTable
             };
 
             await bulkCopy.WriteToServerAsync(table);

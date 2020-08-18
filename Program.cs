@@ -131,7 +131,7 @@ namespace FetchDataFromDynamics
             
             await conn.OpenAsync();
 
-            initialRowCount = CountRows(conn);
+            initialRowCount = await CountRows(conn);
             Console.WriteLine($"The table currently holds {initialRowCount} rows.");
 
             using SqlBulkCopy bulkCopy = new SqlBulkCopy(conn)
@@ -139,9 +139,9 @@ namespace FetchDataFromDynamics
                 DestinationTableName = _targetTable
             };
 
-            await bulkCopy.WriteToServerAsync(table);
+            bulkCopy.WriteToServerAsync(table).Wait();
 
-            finalRowCount = CountRows(conn);
+            finalRowCount = await CountRows(conn);
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine(
                 $"Successfully added {finalRowCount - initialRowCount} rows. (Any ignored members already exist.)"
@@ -152,14 +152,14 @@ namespace FetchDataFromDynamics
         }
 
 
-        private static int CountRows(SqlConnection conn)
+        private async static Task<int> CountRows(SqlConnection conn)
         {
             SqlCommand count = new SqlCommand(
                 $"select count(CUST_NO) from {_targetTable}"
                 ,conn
             );
 
-            return System.Convert.ToInt32(count.ExecuteScalar());
+            return System.Convert.ToInt32(await count.ExecuteScalarAsync());
         }
     }
 }

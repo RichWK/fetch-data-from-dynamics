@@ -19,7 +19,9 @@ namespace FetchDataFromDynamics
         {
             string[] scopes = new string[] { _conn["Scope"] };
             
-            Console.WriteLine($"Contacting the Dynamics Web API @ {_conn["Scope"].Replace(".default","")}");
+            Console.WriteLine(
+                $"Contacting the Dynamics Web API @ {_conn["Scope"].Replace(".default","")}"
+            );
 
             _app = ConfidentialClientApplicationBuilder.Create(_conn["ClientId"])
                 .WithClientSecret(_conn["ClientSecret"])
@@ -32,3 +34,4 @@ namespace FetchDataFromDynamics
         }
     }
 }
+

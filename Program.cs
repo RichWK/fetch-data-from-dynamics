@@ -33,7 +33,7 @@ namespace FetchDataFromDynamics
                 Logging.HandleException(ex);
             }
 
-            Console.WriteLine("Exiting in {0} seconds...", _wait);
+            Console.WriteLine($"Exiting in {_wait} seconds...");
             System.Threading.Thread.Sleep(TimeSpan.FromSeconds(_wait));
         }
 
@@ -76,7 +76,7 @@ namespace FetchDataFromDynamics
 
             jsonOutput = JsonConvert.SerializeObject(contacts, Formatting.Indented);
 
-            Console.WriteLine("Fetched {0} recently created members.", contacts.Count);
+            Console.WriteLine($"Fetched {contacts.Count} recently created members.");
 
             Contacts = contacts;
             Json = jsonOutput;
@@ -122,8 +122,7 @@ namespace FetchDataFromDynamics
             int finalRowCount;
 
             Console.WriteLine(
-                "Attempting to copy data into the '{0}' table..."
-                , _targetTable
+                $"Attempting to copy data into the '{_targetTable}' table..."
             );
 
             using SqlConnection conn = new SqlConnection(
@@ -133,7 +132,7 @@ namespace FetchDataFromDynamics
             await conn.OpenAsync();
 
             initialRowCount = CountRows(conn);
-            Console.WriteLine("The table currently holds {0} rows.", initialRowCount);
+            Console.WriteLine($"The table currently holds {initialRowCount} rows.");
 
             using SqlBulkCopy bulkCopy = new SqlBulkCopy(conn)
             {
@@ -145,19 +144,18 @@ namespace FetchDataFromDynamics
             finalRowCount = CountRows(conn);
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine(
-                "Successfully added {0} rows. (Any ignored members already exist.)"
-                ,finalRowCount - initialRowCount
+                $"Successfully added {finalRowCount - initialRowCount} rows. (Any ignored members already exist.)"
             );
 
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine("The table now holds {0} rows.", finalRowCount);
+            Console.WriteLine($"The table now holds {finalRowCount} rows.");
         }
 
 
         private static int CountRows(SqlConnection conn)
         {
             SqlCommand count = new SqlCommand(
-                String.Format("select count(CUST_NO) from {0}", _targetTable)
+                $"select count(CUST_NO) from {_targetTable}"
                 ,conn
             );
 
